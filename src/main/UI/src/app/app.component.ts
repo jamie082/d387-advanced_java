@@ -30,10 +30,13 @@ export class AppComponent implements OnInit{
   announcePresentation$!: Observable<string>
   welcome!:string;
   message2!:Observable<string>
+  presentationTimes$!: Observable<string>
     ngOnInit(){
 // new code for webinar
       this.announcePresentation$ = this.httpClient.get(this.baseURL + '/room/reservation/v1/livepresentation', {responseType: 'text'} )
       this.message2 = this.httpClient.get(this.baseURL + '/api/presentation', {responseType: 'text'} )
+      //Presentation Times
+      this.presentationTimes$ = this.httpClient.get(this.baseURL + "/presentation", {responseType: "text"})
 
       this.getWelcomeMessage().subscribe(
         // message => {console.log(Object.values(message));this.message=<string>Object.values(message)[0]; }
