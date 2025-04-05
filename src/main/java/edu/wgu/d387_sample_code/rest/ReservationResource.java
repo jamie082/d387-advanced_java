@@ -42,58 +42,59 @@ public class ReservationResource {
     @Autowired
     ApplicationContext context;
 
-       // @Autowired
-       // PageableRoomRepository pageableRoomRepository;
+    // @Autowired
+    // PageableRoomRepository pageableRoomRepository;
 
-        @Autowired
-        RoomRepository roomRepository;
+    @Autowired
+    RoomRepository roomRepository;
 
-        @Autowired
-        ReservationRepository reservationRepository;
+    @Autowired
+    ReservationRepository reservationRepository;
 
-        @Autowired
-        ConversionService conversionService;
+    @Autowired
+    ConversionService conversionService;
 
-        @Autowired
-        private RoomEntityToReservableRoomResponseConverter converter;
+    @Autowired
+    private RoomEntityToReservableRoomResponseConverter converter;
 
-    @RequestMapping(path ="", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Page<ReservableRoomResponse> getAvailableRooms (
+    @RequestMapping(path = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Page<ReservableRoomResponse> getAvailableRooms(
             @RequestParam(value = "checkin")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                    LocalDate checkin,
+            LocalDate checkin,
             @RequestParam(value = "checkout")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                    LocalDate checkout, Pageable pageable) {
+            LocalDate checkout, Pageable pageable) {
 
 
-        RoomService roomService=context.getBean(RoomServiceImpl.class);
-        ReservationService reservationService=context.getBean(ReservationServiceImpl.class);
-        List<RoomEntity> allRooms=roomService.findAll();
-        List<ReservationEntity> allReservations=reservationService.findAll();
-        for(ReservationEntity reservationEntity: allReservations){
-            LocalDate rcheckin=reservationEntity.getCheckin();
-            LocalDate rcheckout=reservationEntity.getCheckout();
-            if(rcheckin.isBefore(checkin)&&rcheckout.isAfter(checkin))allRooms.remove(reservationEntity.getRoomEntity());
-            else if(rcheckin.isAfter(checkin)&&rcheckin.isBefore(checkout)) allRooms.remove(reservationEntity.getRoomEntity());
-            else if(rcheckin.isEqual(checkin)) allRooms.remove(reservationEntity.getRoomEntity());
+        RoomService roomService = context.getBean(RoomServiceImpl.class);
+        ReservationService reservationService = context.getBean(ReservationServiceImpl.class);
+        List<RoomEntity> allRooms = roomService.findAll();
+        List<ReservationEntity> allReservations = reservationService.findAll();
+        for (ReservationEntity reservationEntity : allReservations) {
+            LocalDate rcheckin = reservationEntity.getCheckin();
+            LocalDate rcheckout = reservationEntity.getCheckout();
+            if (rcheckin.isBefore(checkin) && rcheckout.isAfter(checkin))
+                allRooms.remove(reservationEntity.getRoomEntity());
+            else if (rcheckin.isAfter(checkin) && rcheckin.isBefore(checkout))
+                allRooms.remove(reservationEntity.getRoomEntity());
+            else if (rcheckin.isEqual(checkin)) allRooms.remove(reservationEntity.getRoomEntity());
         }
-        Page<RoomEntity> page=new PageImpl<>(allRooms);
+        Page<RoomEntity> page = new PageImpl<>(allRooms);
         return page.map(converter::convert);
     }
 
     @RequestMapping(path = "/{roomId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RoomEntity> getRoomById(
             @PathVariable
-                    Long roomId) {
+            Long roomId) {
 
-        Optional<RoomEntity> result  = roomRepository.findById(roomId);
-        RoomEntity roomEntity= null;
+        Optional<RoomEntity> result = roomRepository.findById(roomId);
+        RoomEntity roomEntity = null;
 
         if (result.isPresent()) {
-            roomEntity= result.get();
-        }
-        else {
+            roomEntity = result.get();
+        } else {
             // we didn't find the employee
             //throw new RuntimeException("Did not find part id - " + theId);
             return null;
@@ -108,32 +109,31 @@ public class ReservationResource {
             @RequestBody
             ReservationRequest reservationRequest) {
 
-            ReservationEntity reservationEntity = conversionService.convert(reservationRequest, ReservationEntity.class);
-            reservationRepository.save(reservationEntity);
-        ReservationService repository=context.getBean(ReservationServiceImpl.class);
-            reservationEntity=repository.findLast();
-        Optional<RoomEntity> result  = roomRepository.findById(reservationRequest.getRoomId());
-        RoomEntity roomEntity= null;
+        ReservationEntity reservationEntity = conversionService.convert(reservationRequest, ReservationEntity.class);
+        reservationRepository.save(reservationEntity);
+        ReservationService repository = context.getBean(ReservationServiceImpl.class);
+        reservationEntity = repository.findLast();
+        Optional<RoomEntity> result = roomRepository.findById(reservationRequest.getRoomId());
+        RoomEntity roomEntity = null;
 
         if (result.isPresent()) {
-            roomEntity= result.get();
-        }
-        else {
+            roomEntity = result.get();
+        } else {
             // we didn't find the employee
             //throw new RuntimeException("Did not find part id - " + theId);
             return null;
         }
 
         roomEntity.addReservationEntity(reservationEntity);
-            roomRepository.save(roomEntity);
-            reservationEntity.setRoomEntity(roomEntity);
+        roomRepository.save(roomEntity);
+        reservationEntity.setRoomEntity(roomEntity);
 
-            ReservationResponse reservationResponse =
-                    conversionService.convert(reservationEntity, ReservationResponse.class);
+        ReservationResponse reservationResponse =
+                conversionService.convert(reservationEntity, ReservationResponse.class);
 
 
-            return new ResponseEntity<>(reservationResponse, HttpStatus.CREATED);
-       // return new ResponseEntity<>(new ReservationResponse(), HttpStatus.CREATED);
+        return new ResponseEntity<>(reservationResponse, HttpStatus.CREATED);
+        // return new ResponseEntity<>(new ReservationResponse(), HttpStatus.CREATED);
     }
 
     @RequestMapping(path = "", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE,
@@ -153,4 +153,14 @@ public class ReservationResource {
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
+    @RequestMapping(path = "/livepresentation")
+    public ResponseEntity<String> displayLivePresentation() {
+        String presentation = "Join us for an online live presentation 2";
+        return new ResponseEntity<String> (presentation, HttpStatus.OK);
+    }
+    @RequestMapping(path ="/presentation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String[] showPresentation(){
+        String finalMessage= "Join us for an online live presentation";
+        return new String[]{finalMessage};
+    }
 }

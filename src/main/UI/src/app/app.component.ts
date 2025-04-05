@@ -27,8 +27,24 @@ export class AppComponent implements OnInit{
   request!:ReserveRoomRequest;
   currentCheckInVal!:string;
   currentCheckOutVal!:string;
-
+  announcePresentation$!: Observable<string>
+  welcome!:string;
+  message2!:Observable<string>
     ngOnInit(){
+// new code for webinar
+      this.announcePresentation$ = this.httpClient.get(this.baseURL + '/room/reservation/v1/livepresentation', {responseType: 'text'} )
+      this.message2 = this.httpClient.get(this.baseURL + '/api/presentation', {responseType: 'text'} )
+
+      this.getWelcomeMessage().subscribe(
+        // message => {console.log(Object.values(message));this.message=<string>Object.values(message)[0]; }
+        // welcome => {console.log((welcome.message));}
+        welcome=>{
+          console.log(Object.values(welcome));
+          this.welcome=<any>Object.values(welcome);
+        }
+      );
+
+
       this.roomsearch= new FormGroup({
         checkin: new FormControl(' '),
         checkout: new FormControl(' ')
@@ -82,8 +98,12 @@ export class AppComponent implements OnInit{
 
        return this.httpClient.get(this.baseURL + '/room/reservation/v1?checkin='+ this.currentCheckInVal + '&checkout='+this.currentCheckOutVal, {responseType: 'json'});
     }
-
+  getWelcomeMessage(): Observable<any>{
+    return this.httpClient.get(this.baseURL + '/room/reservation/v1/presentation', {responseType: 'json'});
   }
+
+
+}
 
 
 
