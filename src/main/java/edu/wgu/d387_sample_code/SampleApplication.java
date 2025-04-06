@@ -1,5 +1,40 @@
 package edu.wgu.d387_sample_code;
 
+import edu.wgu.d387_sample_code.translations.DisplayWelcomeMessage;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+
+import java.util.Locale;
+
+@SpringBootApplication
+public class SampleApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(SampleApplication.class, args);
+
+
+        // Create threads for each welcome message.
+
+        //English message
+        DisplayWelcomeMessage displayWelcomeMessageEnglish = new DisplayWelcomeMessage(Locale.US);
+        Thread englishMessage = new Thread(displayWelcomeMessageEnglish);
+        englishMessage.start();
+
+        //French message
+        DisplayWelcomeMessage displayWelcomemessageFrench = new DisplayWelcomeMessage((Locale.CANADA_FRENCH));
+        Thread frenchmessage = new Thread(displayWelcomemessageFrench);
+        frenchmessage.start();
+
+
+
+
+    }
+}
+/*
+package edu.wgu.d387_sample_code;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.io.ClassPathResource;
@@ -18,7 +53,7 @@ public class SampleApplication {
         Properties properties=new Properties();
         messageExecutor.execute(()-> {
             try {
-                InputStream stream = new ClassPathResource("welcoome_es_MX.properties").getInputStream();
+                InputStream stream = new ClassPathResource("welcoome_fr_CA.properties").getInputStream();
                 properties.load(stream);
                 System.out.println(properties.getProperty("welcome"));
             } catch (Exception e) {
@@ -37,3 +72,4 @@ public class SampleApplication {
     }
 
 }
+*/

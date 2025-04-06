@@ -5,15 +5,6 @@
     <div class="hgroup">
       <h1>Landon Hotel</h1>
       <h2>London, Ontario</h2>
-      <div class="scene" id="presentation">
-      <h1>{{announcePresentation$ | async}}</h1>
-    </div>
-    <div class="scene" id="presentation2">
-      <h1>{{welcome}}</h1>
-    </div>
-    <div class="scene" id="presentation3">
-      <h1>{{message2| async}}</h1>
-    </div>
     <p><a href="/#welcome"><img src="assets/images/arrow.png" alt="down arrow"></a></p>
   </div>
   </article>
@@ -24,6 +15,10 @@
     <nav id="nav" style="position: relative; top: 0; left: 0; bottom: auto; right: auto; width: 100%;">
       <div class="navbar">
         <div class="brand"><a href="/#welcome">Landon <span>Hotel</span></a></div>
+        <div>
+        <h1>{{welcomeMessageEng$ | async}}</h1>
+        <h1>{{welcomeMessageFre$ | async}}</h1>
+          </div>
       </div><!-- navbar -->
     </nav>
   </div>

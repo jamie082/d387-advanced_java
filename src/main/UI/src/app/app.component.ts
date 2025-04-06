@@ -14,6 +14,9 @@ import {map} from "rxjs/operators";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit{
+  welcomeMessageEng$!: Observable<string>
+  welcomeMessageFre$!: Observable<string>
+  presentationTimes$!: Observable<string>
 
   constructor(private httpClient:HttpClient){}
 
@@ -30,14 +33,23 @@ export class AppComponent implements OnInit{
   announcePresentation$!: Observable<string>
   welcome!:string;
   message2!:Observable<string>
-  presentationTimes$!: Observable<string>
     ngOnInit(){
 // new code for webinar
-      this.announcePresentation$ = this.httpClient.get(this.baseURL + '/room/reservation/v1/livepresentation', {responseType: 'text'} )
+      //this.announcePresentation$ = this.httpClient.get(this.baseURL + '/room/reservation/v1/livepresentation', {responseType: 'text'} )
       this.message2 = this.httpClient.get(this.baseURL + '/api/presentation', {responseType: 'text'} )
       //Presentation Times
       this.presentationTimes$ = this.httpClient.get(this.baseURL + "/presentation", {responseType: "text"})
 
+      this.welcomeMessageEng$ = this.httpClient.get(this.baseURL + "/welcome/?lang=en-US", {responseType: "text"})
+
+      //French Message.
+      // localhost:8080/welcome/?lang=fr-CA
+      this.welcomeMessageFre$ = this.httpClient.get(this.baseURL + "/welcome/?lang=fr-CA", {responseType: "text"})
+
+
+      //Presentation Times
+      this.presentationTimes$ = this.httpClient.get(this.baseURL + "/presentation", {responseType: "text"})
+/*
       this.getWelcomeMessage().subscribe(
         // message => {console.log(Object.values(message));this.message=<string>Object.values(message)[0]; }
         // welcome => {console.log((welcome.message));}
@@ -46,7 +58,7 @@ export class AppComponent implements OnInit{
           this.welcome=<any>Object.values(welcome);
         }
       );
-
+*/
 
       this.roomsearch= new FormGroup({
         checkin: new FormControl(' '),
